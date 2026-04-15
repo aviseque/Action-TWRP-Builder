@@ -109,10 +109,15 @@ jobs:
         cd workspace
         repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 
-    - name: Clone Device Tree
+    - name: Clean workspace for device tree
       run: |
         cd workspace
         rm -rf ${{ github.event.inputs.DEVICE_PATH }} 2>/dev/null || true
+        rm -rf $(ls -A) 2>/dev/null || true
+
+    - name: Clone Device Tree
+      run: |
+        cd workspace
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ${{ github.event.inputs.DEVICE_PATH }}
 
     - name: Clone common tree (if provided)
@@ -126,10 +131,10 @@ jobs:
         cd workspace
         echo "=== Workspace contents ==="
         ls -la
-        echo "=== Build folder contents ==="
-        ls -la build/ || echo "build/ folder not found!"
-        echo "=== Out folder ==="
-        ls -la out/ 2>/dev/null || echo "out/ folder not found yet"
+        echo "=== Device tree contents ==="
+        ls -la ${{ github.event.inputs.DEVICE_PATH }}
+        echo "=== Build folder ==="
+        ls -la build/ || echo "build/ folder not found"
 
     - name: Set Swap Space
       uses: pierotofy/set-swap-space@master
