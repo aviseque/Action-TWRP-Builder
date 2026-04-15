@@ -1,4 +1,4 @@
-name: Recovery Build
+name: Recovery Build v2.0 - Proper Device Path
 
 on:
   workflow_dispatch:
@@ -22,7 +22,7 @@ on:
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
-        default: '.'
+        default: 'device/samsung/m02'
       COMMON_TREE_URL:
         description: 'COMMON_TREE_URL (if no common tree, leave blank)'
         required: false
@@ -109,11 +109,10 @@ jobs:
         cd workspace
         repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 
-    - name: Clean workspace for device tree
+    - name: Create device tree directory
       run: |
         cd workspace
-        rm -rf ${{ github.event.inputs.DEVICE_PATH }} 2>/dev/null || true
-        rm -rf $(ls -A) 2>/dev/null || true
+        mkdir -p ${{ github.event.inputs.DEVICE_PATH }}
 
     - name: Clone Device Tree
       run: |
