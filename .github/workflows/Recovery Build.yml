@@ -1,4 +1,4 @@
-name: Recovery Build v2.0 - Proper Device Path
+name: gogohhh
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com/aviseque/twrp_device_m02'
+        default: 'https://github.com/aviseque/twrp_device_samsung_m02'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
