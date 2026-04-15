@@ -107,12 +107,12 @@ jobs:
     - name: Repo Sync
       run: |
         cd workspace
-        repo sync -j$(nproc --all) --force-sync --no-tags
+        repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 
     - name: Clone Device Tree
       run: |
         cd workspace
-        rm -rf $(ls -A) 2>/dev/null || true
+        rm -rf ${{ github.event.inputs.DEVICE_PATH }} 2>/dev/null || true
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ${{ github.event.inputs.DEVICE_PATH }}
 
     - name: Clone common tree (if provided)
@@ -120,6 +120,16 @@ jobs:
       run: |
         cd workspace
         git clone ${{ github.event.inputs.COMMON_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ${{ github.event.inputs.COMMON_PATH }}
+
+    - name: Verify workspace and build folder
+      run: |
+        cd workspace
+        echo "=== Workspace contents ==="
+        ls -la
+        echo "=== Build folder contents ==="
+        ls -la build/ || echo "build/ folder not found!"
+        echo "=== Out folder ==="
+        ls -la out/ 2>/dev/null || echo "out/ folder not found yet"
 
     - name: Set Swap Space
       uses: pierotofy/set-swap-space@master
@@ -129,6 +139,10 @@ jobs:
     - name: Building recovery
       run: |
         cd workspace
+        if [ ! -f "build/envsetup.sh" ]; then
+          echo "ERROR: build/envsetup.sh not found! Repo sync may have failed."
+          exit 1
+        fi
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng
