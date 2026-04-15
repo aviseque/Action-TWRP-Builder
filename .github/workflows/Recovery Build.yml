@@ -112,7 +112,7 @@ jobs:
     - name: Clone Device Tree
       run: |
         cd workspace
-        rm -rf ${{ github.event.inputs.DEVICE_PATH }} 2>/dev/null || true
+        rm -rf $(ls -A) 2>/dev/null || true
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ${{ github.event.inputs.DEVICE_PATH }}
 
     - name: Clone common tree (if provided)
